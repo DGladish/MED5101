@@ -1,0 +1,113 @@
+---
+title: "MED 5101 - RNA-seq Assignment 2: DESeq2 (Daniel Gladish: 300399445)"
+author: "Daniel Gladish (300399445), Perkins Lab, OHRI"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    toc: true    
+    toc_depth: 4 
+bibliography: refs.bib # ****DO THIS LATER 
+---
+
+
+
+
+Import the necessary libraries.
+```{r}
+## Load the libraries required for the analysis
+
+# Loading data
+library(GEOquery)
+
+# Analysis tools
+library(DESeq2)           # Fold change analysis
+library(apeglm)           # Method for shrinking fold changes
+
+# Data visualization
+library(tidyverse)        # Data munging and visualization (ggplot2)
+library(ggrepel)          # Improved labeling of plots
+library(pheatmap)         # Pretty Heatmaps
+library(EnhancedVolcano)  # Volcano plots
+library(RColorBrewer)     # Colour palettes
+
+# R markdown document formatting
+library(knitr)
+```
+
+Download the data
+```{r, eval=FALSE}
+    getGEOSuppFiles("GSE144871")
+    list.files("GSE144871")
+```
+
+import the data
+```{r}
+    gli3_data<-read.table("./GSE144871/GSE144871_filtered_counts_190926.txt.gz",sep="\t",header=T)
+
+# note that GLI3_data will be a data frame as read.table creates a data frame by default
+```
+
+
+
+
+Convert df to mat, and move gene symbols into the row names, as this is the require format for DESeq2
+
+
+Inspect the data frame
+```{r}
+print(head(gli3_data))
+```
+
+Eliminate the ensembl ID Convert the df to matrix & place the gene symbols (contents of MGI column) in the row names
+```{r}
+gli3_data$ensembl <- NULL
+
+
+# select the columns of the data frame I want to keep.
+columns_to_keep <- c("ASC.1818", "ASC.246", "ASC.540", "ASC.543", "ASC.928", "ASC.960")
+
+gli3_mat <- as.matrix(gli3_data[, match(columns_to_keep, colnames(gli3_data))])
+
+#check to see if conversion was successful
+print(all(colnames(gli3_mat)==columns_to_keep))
+```
+
+
+```{r}
+rownames(gli3_mat) <- gli3_data$MGI
+
+# let's eliminate the columns that aren't going to be used in the analysis
+
+
+# print subset of gli3_mat to see if conversion worked
+print(head(gli3_mat))
+```
+
+
+Create table containing metadata (sample names & associated conditions) for each of the samples. NOTE: make sure order of samples names in the vector = order of samples names in the matrix
+```{r}
+condition <- factor(c(rep("ASC-Gli3", times=3), rep("Control", times=3)), levels=c("Control", "ASC-Gli3"))
+
+sampleTable <- data.frame(data.frame(sample_name=colnames(gli3_mat),condition=condition))
+```
+
+
+
+```{r}
+
+
+```
+
+
+
+
+```{r}
+
+
+```
+
+
+```{r}
+
+```
+
